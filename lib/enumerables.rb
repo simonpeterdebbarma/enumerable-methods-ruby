@@ -1,5 +1,5 @@
 module Enumerables
-  def my_each(item)
+  def my_each
     if self.class == Array
       0.upto(length - 1) do |i|
         yield (self[i])
@@ -12,6 +12,12 @@ module Enumerables
       0.upto(kv.length - 1) do |i|
         yield(kv[i])
       end
+    end
+  end
+
+  def my_each_with_index
+    0.upto(length - 1) do |index|
+      yield(self[index], index)
     end
   end
 end
