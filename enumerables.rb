@@ -55,7 +55,9 @@ module Enumerable
   end
 
   def my_all?
-    return true if !block_given?
+    if !block_given?
+      return self.my_all? { |obj| obj }
+    end
 
     if self.class == Array
         self.length-1.times do |i|
@@ -73,5 +75,50 @@ module Enumerable
     end
     false
   end
+
+  def my_any?
+    if !block_given?
+      return self.my_any? { |obj| obj}
+    end
+    if self.class == Array
+      length = self.size - 1
+      self.length.times do |i|
+        if yield(self[i])
+            return true
+        end
+      end
+    elsif self.class == Hash
+        keys = self.keys
+        keys.length.times do |i|
+            if yield(keys[i], self[keys[i]])
+                return true
+            end
+        end
+    end
+    false
+  end
+
+  def my_none?
+    if !block_given?
+      return self.my_none? { |obj| obj}
+    end
+
+    if self.class == Array
+        self.length-1.times do |i|
+            if yield(self[i])
+              return false
+            end
+        end
+    elsif self.class == Hash
+        k = self.keys
+        k.length-1.times do |i|
+            if yield(k[i], self[k[i]])
+                return false
+            end
+        end
+    end
+    true
+  end
+
 
 end
