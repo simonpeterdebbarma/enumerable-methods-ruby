@@ -1,8 +1,7 @@
 module Enumerables
-  # rubocop:disable Style/For
-  def my_each
+  def my_each(item)
     if self.class == Array
-      for i in (0..length - 1)
+      0.upto(length - 1) do |i|
         yield (self[i])
       end
     elsif self.class == Hash
@@ -10,10 +9,9 @@ module Enumerables
       keys.my_each do |k|
         kv << [k, (self[k])]
       end
-      for i in (0..kv.length - 1)
+      0.upto(kv.length - 1) do |i|
         yield(kv[i])
       end
     end
   end
-  # rubocop:enable Style/For
 end
