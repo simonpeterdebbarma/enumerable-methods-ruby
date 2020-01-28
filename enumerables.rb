@@ -54,7 +54,24 @@ module Enumerable
     selected
   end
 
-  def my_all
-    
+  def my_all?
+    return true if !block_given?
+
+    if self.class == Array
+        self.length-1.times do |i|
+            if yield(self[i])
+              return true
+            end
+        end
+    elsif self.class == Hash
+        k = self.keys
+        k.length-1.times do |i|
+            if yield(k[i], self[k[i]])
+                return true
+            end
+        end
+    end
+    false
   end
+
 end
