@@ -143,16 +143,36 @@ describe 'my_count' do
 end
 
 describe 'my_map' do
-  it 'block not given' do
+  it 'block and proc not given' do
     expect([1, 5, 2].my_map.class).to eq(Enumerator)
   end
 
-  it 'maps array' do
+  it 'maps array with block' do
     expect([1, 2, 4, 5].my_map { |n| n + 2 }).to eq([3, 4, 6, 7])
   end
 
-  it 'maps hash' do
+  it 'maps array with proc' do
+    proc = proc { |n| n + 3 }
+    expect([1, 2, 4, 5].my_map(proc)).to eq([4, 5, 7, 8])
+  end
+
+  it 'maps array with proc and block' do
+    proc = proc { |n| n + 3 }
+    expect([1, 2, 4, 5].my_map(proc) { |n| n + 2 }).to eq([4, 5, 7, 8])
+  end
+
+  it 'maps hash with block' do
     expect({ a: 1, b: 2, c: 0 }.my_map { |k, v| k.to_s + v.to_s }).to eq(%w[a1 b2 c0])
+  end
+
+  it 'maps hash with proc' do
+    proc = proc { |_k, v| v + 3 }
+    expect({ a: 1, b: 2, c: 0 }.my_map(proc)).to eq([4, 5, 3])
+  end
+
+  it 'maps hash with proc and block' do
+    proc = proc { |_k, v| v + 3 }
+    expect({ a: 1, b: 2, c: 0 }.my_map(proc) { |_k, v| v + 2 }).to eq([4, 5, 3])
   end
 end
 
@@ -208,16 +228,10 @@ describe 'my_inject' do
   it 'divides ranges' do
     expect((1..5).my_inject { |divides, n| divides / n }).to eq(0)
   end
+end
 
-  it 'creates an Array' do
-    expect([10, 20, 30, 5, 7, 9, 3].each_with_object([]) do |element, result|
-             result << element.to_s if element > 9
-           end).to eq(%w[10 20 30])
-  end
-
-  it 'creates a Hash' do
-    expect([[:student, 'Terrance Koar'], [:course, 'Web Dev']].each_with_object({}) do |element, result|
-             result[element.first.to_s] = element.last.upcase
-           end).to eq('student' => 'TERRANCE KOAR', 'course' => 'WEB DEV')
+describe 'multiply_els' do
+  it 'using my_inject' do
+    expect(multiply_els([2, 4, 5])).to eq(40)
   end
 end

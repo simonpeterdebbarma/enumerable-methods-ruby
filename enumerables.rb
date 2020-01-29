@@ -74,8 +74,7 @@ module Enumerable
     return my_any? { |obj| obj } unless block_given?
 
     if self.class == Array
-      length = self.size - 1
-      self.length.times do |i|
+      (length - 1).times do |i|
           if yield(self[i])
               return true
           end
@@ -107,7 +106,7 @@ module Enumerable
     true
   end
 
-  def my_count *arg 
+  def my_count *arg
     count = 0
     if !arg.empty?
         self.my_each do |obj|
@@ -131,5 +130,26 @@ module Enumerable
       end
     end
     count
+  end
+
+  def my_map(proc = nil)
+    return to_enum(:my_map) if !block_given? && proc.nil?
+
+    mapped = []
+
+    if !proc.nil?
+      my_each_with_index do |n, i|
+        mapped [i] = proc.call(n)
+      end
+    else
+      my_each_with_index do |n, i|
+        mapped [i] = yield n
+      end
+    end
+    mapped
+  end
+
+  def my_inject *initial
+    
   end
 end
