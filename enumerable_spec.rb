@@ -155,3 +155,69 @@ describe 'my_map' do
     expect({ a: 1, b: 2, c: 0 }.my_map { |k, v| k.to_s + v.to_s }).to eq(%w[a1 b2 c0])
   end
 end
+
+describe 'my_inject' do
+  it 'block not given' do
+    expect { [1, 2, 5].my_inject }.to raise_error('no block given')
+  end
+
+  it 'sums with a starting point' do
+    expect([1, 2, 4, 5].my_inject(10) { |sum, n| sum + n }).to eq(22)
+  end
+
+  it 'sums arrays' do
+    expect([1, 2, 4, 5].my_inject { |sum, n| sum + n }).to eq(12)
+  end
+
+  it 'sums ranges' do
+    expect((1..5).my_inject { |sum, n| sum + n }).to eq(15)
+  end
+
+  it 'substracts with a starting point' do
+    expect([1, 2, 4, 5].my_inject(10) { |substract, n| substract - n }).to eq(-2)
+  end
+
+  it 'substracts arrays' do
+    expect([1, 2, 4, 5].my_inject { |substract, n| substract - n }).to eq(-10)
+  end
+
+  it 'substracts ranges' do
+    expect((1..5).my_inject { |substract, n| substract - n }).to eq(-13)
+  end
+
+  it 'multiplies with a starting point' do
+    expect([1, 2, 4, 5].my_inject(10) { |multiplies, n| multiplies * n }).to eq(400)
+  end
+
+  it 'multiplies arrays' do
+    expect([1, 2, 4, 5].my_inject { |multiplies, n| multiplies * n }).to eq(40)
+  end
+
+  it 'multiplies ranges' do
+    expect((1..5).my_inject { |multiplies, n| multiplies * n }).to eq(120)
+  end
+
+  it 'divides with a starting point' do
+    expect([1, 2, 4, 5].my_inject(10.2) { |divides, n| divides / n }).to eq(0.255)
+  end
+
+  it 'divides arrays' do
+    expect([1, 2, 4, 5].my_inject { |divides, n| divides / n }).to eq(0)
+  end
+
+  it 'divides ranges' do
+    expect((1..5).my_inject { |divides, n| divides / n }).to eq(0)
+  end
+
+  it 'creates an Array' do
+    expect([10, 20, 30, 5, 7, 9, 3].each_with_object([]) do |element, result|
+             result << element.to_s if element > 9
+           end).to eq(%w[10 20 30])
+  end
+
+  it 'creates a Hash' do
+    expect([[:student, 'Terrance Koar'], [:course, 'Web Dev']].each_with_object({}) do |element, result|
+             result[element.first.to_s] = element.last.upcase
+           end).to eq('student' => 'TERRANCE KOAR', 'course' => 'WEB DEV')
+  end
+end

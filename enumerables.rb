@@ -55,70 +55,81 @@ module Enumerable
   end
 
   def my_all?
-    if !block_given?
-      return self.my_all? { |obj| obj }
-    end
+    return my_all? { |obj| obj } unless block_given?
 
     if self.class == Array
-        self.length-1.times do |i|
-            if yield(self[i])
-              return true
-            end
-        end
+      length - 1.times do |i|
+        return true if yield(self[i])
+      end
     elsif self.class == Hash
-        k = self.keys
-        k.length-1.times do |i|
-            if yield(k[i], self[k[i]])
-                return true
-            end
-        end
+      k = keys
+      k.length - 1.times do |i|
+        return true if yield(k[i], self[k[i]])
+      end
     end
     false
   end
 
   def my_any?
-    if !block_given?
-      return self.my_any? { |obj| obj}
-    end
+    return my_any? { |obj| obj } unless block_given?
+
     if self.class == Array
       length = self.size - 1
       self.length.times do |i|
-        if yield(self[i])
-            return true
-        end
+          if yield(self[i])
+              return true
+          end
       end
-    elsif self.class == Hash
-        keys = self.keys
-        keys.length.times do |i|
-            if yield(keys[i], self[keys[i]])
-                return true
-            end
-        end
-    end
-    false
+  elsif self.class == Hash
+      keys = self.keys
+      keys.length.times do |i|
+          if yield(keys[i], self[keys[i]])
+              return true
+          end
+      end
+  end
+  false
   end
 
   def my_none?
-    if !block_given?
-      return self.my_none? { |obj| obj}
-    end
+    return my_none? { |obj| obj } unless block_given?
 
     if self.class == Array
-        self.length-1.times do |i|
-            if yield(self[i])
-              return false
-            end
-        end
+      length - 1.times do |i|
+        return false if yield(self[i])
+      end
     elsif self.class == Hash
-        k = self.keys
-        k.length-1.times do |i|
-            if yield(k[i], self[k[i]])
-                return false
-            end
-        end
+      k = keys
+      k.length - 1.times do |i|
+        return false if yield(k[i], self[k[i]])
+      end
     end
     true
   end
 
-
+  def my_count *arg 
+    count = 0
+    if !arg.empty?
+        self.my_each do |obj|
+            if obj == arg[0]
+                count += 1
+            end
+       end
+       return count
+    end
+    if !block_given?
+        return self.length
+    elsif self.class == Array
+        (length - 1).times do |i|
+            if yield(self[i])
+                count += 1
+            end
+        end
+    elsif self.class == Hash
+      self.my_each do |i|
+        count += 1 if yield i.to_a[0], i.to_a[1]
+      end
+    end
+    count
+  end
 end
