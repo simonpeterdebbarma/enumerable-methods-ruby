@@ -163,6 +163,10 @@ describe 'my_none?' do
     expect(%w[dog dog dog dog].my_none?('dog')).to eq(false)
   end
 
+  it 'pattern other than a Class or Regex' do
+    expect(%w[dog door rod blade].my_none?(5)).to eq(false)
+  end
+
   it 'Class, false' do
     expect(%w[dog dog dog dog].my_none?(String)).to eq(false)
   end
@@ -172,15 +176,15 @@ describe 'my_none?' do
   end
 
   it 'none with array true' do
-    expect([1, 2, 4, 5].my_none? { |n| n > 3 }).to eq(true)
+    expect(%w{ant bear cat}.none? { |word| word.length == 5 }).to eq(true)
   end
 
   it 'none with array false' do
-    expect([1, 2, 4, 5].my_none? { |n| n >= 1 }).to eq(false)
+    expect(%w{ant bear cat}.none? { |word| word.length >= 4 }).to eq(false)
   end
 
   it 'none with hash true' do
-    expect({ a: 1, b: 2, c: 0 }.my_none? { |_k, v| v == 2 }).to eq(true)
+    expect({ a: 1, b: 2, c: 0 }.my_none? { |_k, v| v == 7 }).to eq(true)
   end
 
   it 'none with hash false' do

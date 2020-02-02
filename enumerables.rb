@@ -61,14 +61,13 @@ module Enumerable
       my_each { |n| return false unless yield n }
     else
       proc = validate_args(arg)
-      my_each { |n| return false unless proc.call(n) }
+      my_select { |n| return false unless proc.call(n) }
     end
     true
   end
 
   def my_none?(arg = nil)
-    return my_select { |element| element == true }.empty? if !block_given? && arg.nil?
-
+    return my_select { |item| item == true }.empty? if !block_given? && arg.nil?
     if block_given?
       my_each { |n| return true unless yield n }
     else
@@ -79,13 +78,13 @@ module Enumerable
   end
 
   def my_any?(arg = nil)
-    return !my_select { |element| element }.empty? if !block_given? && arg.nil?
+    return !my_select { |item| item }.empty? if !block_given? && arg.nil?
 
     if block_given?
       my_each { |n| return true if yield n }
     else
       proc = validate_args(arg)
-      my_each { |n| return true if proc.call(n) }
+      my_select { |n| return true if proc.call(n) }
     end
     false
   end
