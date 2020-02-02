@@ -55,62 +55,50 @@ module Enumerable
   end
 
   def my_all?(arg = nil)
+    return my_all?(arg) if block_given? && !arg.nil?
+
     if block_given?
-      my_each { |x| return false unless yield(x) }
-      true
-    elsif arg
-      if arg.is_a? Regexp
-        my_select { |x| return false unless x.to_s =~ arg }
-      elsif arg.is_a? Class
-        my_select { |x| return false unless x.is_a? arg }
-      else
-        my_select { |x| return false unless x == arg }
-      end
+      my_each { |n| return false unless yield n }
     else
-      my_select { |x| return false unless x }
+      proc = validate_args(arg)
+      my_each { |n| return false unless proc.call(n) }
     end
     true
   end
 
-  def my_any?(given = nil)
+  def my_none?(arg = nil)
+    return my_select { |element| element == true }.empty? if !block_given? && arg.nil?
+
     if block_given?
-      my_each { |x| return true if yield(x) }
-      false
-    elsif given
-      if given.is_a? Regexp
-        my_select { |x| return true if x.to_s =~ given }
-      elsif given.is_a? Class
-        my_select { |x| return true if x.is_a? given }
-      else
-        my_select { |x| return true if x == given }
-      end
+      my_each { |n| return true unless yield n }
     else
-      my_select { |x| return true if x }
+      proc = validate_args(arg)
+      my_each { |n| return true unless proc.call(n) }
     end
     false
   end
 
-  def my_none?(args = nil)
-    if args.nil?
-      return my_select { |item| item == true }.empty? unless block_given?
+  def my_any?(arg = nil)
+    return !my_select { |element| element }.empty? if !block_given? && arg.nil?
 
-      my_each do |i|
-        return true unless yield i
-      end
+    if block_given?
+      my_each { |n| return true if yield n }
+    else
+      proc = validate_args(arg)
+      my_each { |n| return true if proc.call(n) }
     end
-
-    return validate_none(args) unless args.nil?
-
     false
   end
 
-  def validate_none(args)
-    if args.is_a? Regexp
-      my_select { |item| item.to_s.match(args) }.empty?
-    elsif args.is_a? Class
-      my_select { |item| item.class == args }.empty?
+  def validate_args(arg)
+    if arg.nil?
+      proc { |e| e }
+    elsif arg.is_a? Regexp
+      proc { |e| e.to_s.match(arg) }
+    elsif arg.is_a? Class
+      proc { |e| e.class == arg }
     else
-      my_select { |item| item == args }.empty?
+      proc { |e| e == arg }
     end
   end
 
