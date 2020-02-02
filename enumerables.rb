@@ -60,14 +60,14 @@ module Enumerable
       true
     elsif arg
       if arg.is_a? Regexp
-        my_each { |x| return false unless x.to_s =~ arg }
+        my_select { |x| return false unless x.to_s =~ arg }
       elsif arg.is_a? Class
-        my_each { |x| return false unless x.is_a? arg }
+        my_select { |x| return false unless x.is_a? arg }
       else
-        my_each { |x| return false unless x == arg }
+        my_select { |x| return false unless x == arg }
       end
     else
-      my_each { |x| return false unless x }
+      my_select { |x| return false unless x }
     end
     true
   end
@@ -78,24 +78,24 @@ module Enumerable
       false
     elsif given
       if given.is_a? Regexp
-        my_each { |x| return true if x.to_s =~ given }
+        my_select { |x| return true if x.to_s =~ given }
       elsif given.is_a? Class
-        my_each { |x| return true if x.is_a? given }
+        my_select { |x| return true if x.is_a? given }
       else
-        my_each { |x| return true if x == given }
+        my_select { |x| return true if x == given }
       end
     else
-      my_each { |x| return true if x }
+      my_select { |x| return true if x }
     end
     false
   end
 
   def my_none?(args = nil)
     if args.nil?
-      return my_select { |element| element == true }.empty? unless block_given?
+      return my_select { |item| item == true }.empty? unless block_given?
 
-      my_each do |n|
-        return true unless yield n
+      my_each do |i|
+        return true unless yield i
       end
     end
 
@@ -106,11 +106,11 @@ module Enumerable
 
   def validate_none(args)
     if args.is_a? Regexp
-      my_select { |element| element.to_s.match(args) }.empty?
+      my_select { |item| item.to_s.match(args) }.empty?
     elsif args.is_a? Class
-      my_select { |element| element.class == args }.empty?
+      my_select { |item| item.class == args }.empty?
     else
-      my_select { |element| element == args }.empty?
+      my_select { |item| item == args }.empty?
     end
   end
 
@@ -140,44 +140,44 @@ module Enumerable
   def my_map(proc = nil)
     return to_enum(:my_map) if !block_given? && proc.nil?
 
-    mapped = []
+    map_items = []
 
     if !proc.nil?
       my_each_with_index do |n, i|
-        mapped [i] = proc.call(n)
+        map_items [i] = proc.call(n)
       end
     else
       my_each_with_index do |n, i|
-        mapped [i] = yield n
+        map_items [i] = yield n
       end
     end
-    mapped
+    map_items
   end
 
   def my_inject(*given)
     arr = to_a.dup
     if given[0].nil?
-      result = arr.shift
+      injected = arr.shift
     elsif given[1].nil? && !block_given?
-      symbol = given[0]
-      result = arr.shift
+      sym = given[0]
+      injected = arr.shift
     elsif given[1].nil? && block_given?
-      result = given[0]
+      injected = given[0]
     else
-      result = given[0]
-      symbol = given[1]
+      injected = given[0]
+      sym = given[1]
     end
-    arr[0..-1].my_each do |i|
-      result = if symbol
-                 result.send(symbol, i)
+    arr[0..-1].my_each do |item|
+      injected = if sym
+                 injected.send(sym, item)
                else
-                 yield(result, i)
+                 yield(injected, item)
                end
     end
-    result
+    injected
   end
 end
 
-def multiply_els(array)
-  array.my_inject { |multiply, n| multiply * n }
+def multiply_els(arr)
+  arr.my_inject { |a, b| a * b }
 end
