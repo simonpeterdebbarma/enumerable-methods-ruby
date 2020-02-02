@@ -1,4 +1,4 @@
-# enumerable-methods-ruby
+# Enumerable Methods in Ruby
 Rebuilding enumerable methods in Ruby, in partial requirement of Microverse.
 
 ---
