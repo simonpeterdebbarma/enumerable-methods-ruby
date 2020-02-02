@@ -54,56 +54,66 @@ module Enumerable
     selected
   end
 
-  def my_all?
-    return my_all? { |obj| obj } unless block_given?
+ 
+  def my_all?(arg = nil)
+    if block_given?
+      my_each { |x| return false unless yield(x) }
+      true
+    elsif arg
+      if arg.is_a? Regexp
+        my_each { |x| return false unless x.to_s =~ arg }
+      elsif arg.is_a? Class
+        my_each { |x| return false unless x.is_a? arg }
+      else
+        my_each { |x| return false unless x == arg }
+      end
+    else
+      my_each { |x| return false unless x }
+    end
+    true
+  end
 
-    if self.class == Array
-      length - 1.times do |i|
-        return true if yield(self[i])
+
+  def my_any?(given = nil)
+    if block_given?
+      my_each { |x| return true if yield(x) }
+      false
+    elsif given
+      if given.is_a? Regexp
+        my_each { |x| return true if x.to_s =~ given }
+      elsif given.is_a? Class
+        my_each { |x| return true if x.is_a? given }
+      else
+        my_each { |x| return true if x == given }
       end
-    elsif self.class == Hash
-      k = keys
-      k.length - 1.times do |i|
-        return true if yield(k[i], self[k[i]])
-      end
+    else
+      my_each { |x| return true if x }
     end
     false
   end
 
-  def my_any?
-    return my_any? { |obj| obj } unless block_given?
+  def my_none?(args = nil)
+    if args.nil?
+      return my_select { |element| element == true }.empty? unless block_given?
 
-    if self.class == Array
-      (length - 1).times do |i|
-          if yield(self[i])
-              return true
-          end
-      end
-  elsif self.class == Hash
-      keys = self.keys
-      keys.length.times do |i|
-          if yield(keys[i], self[keys[i]])
-              return true
-          end
-      end
-  end
-  false
-  end
-
-  def my_none?
-    return my_none? { |obj| obj } unless block_given?
-
-    if self.class == Array
-      length - 1.times do |i|
-        return false if yield(self[i])
-      end
-    elsif self.class == Hash
-      k = keys
-      k.length - 1.times do |i|
-        return false if yield(k[i], self[k[i]])
+      my_each do |n|
+        return true unless yield n
       end
     end
-    true
+
+    return validate_none(args) unless args.nil?
+
+    false
+  end
+
+  def validate_none(args)
+    if args.is_a? Regexp
+      my_select { |element| element.to_s.match(args) }.empty?
+    elsif args.is_a? Class
+      my_select { |element| element.class == args }.empty?
+    else
+      my_select { |element| element == args }.empty?
+    end
   end
 
   def my_count *arg
@@ -149,7 +159,30 @@ module Enumerable
     mapped
   end
 
-  def my_inject *initial
-    
+  def my_inject(*given)
+    arr = to_a.dup
+    if given[0].nil?
+      result = arr.shift
+    elsif given[1].nil? && !block_given?
+      symbol = given[0]
+      result = arr.shift
+    elsif given[1].nil? && block_given?
+      result = given[0]
+    else
+      result = given[0]
+      symbol = given[1]
+    end
+    arr[0..-1].my_each do |i|
+      result = if symbol
+                 result.send(symbol, i)
+               else
+                 yield(result, i)
+               end
+    end
+    result
   end
+end
+
+def multiply_els(array)
+  array.my_inject { |multiply, n| multiply * n }
 end
