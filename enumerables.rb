@@ -54,7 +54,6 @@ module Enumerable
     selected
   end
 
- 
   def my_all?(arg = nil)
     if block_given?
       my_each { |x| return false unless yield(x) }
@@ -72,7 +71,6 @@ module Enumerable
     end
     true
   end
-
 
   def my_any?(given = nil)
     if block_given?
@@ -116,29 +114,26 @@ module Enumerable
     end
   end
 
-  def my_count *arg
+  def my_count(*arg)
     count = 0
-    if !arg.empty?
-        self.my_each do |obj|
-            if obj == arg[0]
-                count += 1
-            end
-       end
-       return count
+    unless arg.empty?
+      my_each do |obj|
+        count += 1 if obj == arg[0]
+      end
+      return count
     end
-    if !block_given?
-        return self.length
-    elsif self.class == Array
-        (length - 1).times do |i|
-            if yield(self[i])
-                count += 1
-            end
-        end
+    return length unless block_given?
+
+    if self.class == Array
+      (length - 1).times do |i|
+        count += 1 if yield(self[i])
+      end
     elsif self.class == Hash
-      self.my_each do |i|
+      my_each do |i|
         count += 1 if yield i.to_a[0], i.to_a[1]
       end
     end
+
     count
   end
 
