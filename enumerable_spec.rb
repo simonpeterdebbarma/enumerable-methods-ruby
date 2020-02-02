@@ -176,11 +176,11 @@ describe 'my_none?' do
   end
 
   it 'none with array true' do
-    expect(%w{ant bear cat}.none? { |word| word.length == 5 }).to eq(true)
+    expect(%w[ant bear cat].none? { |word| word.length == 5 }).to eq(true)
   end
 
   it 'none with array false' do
-    expect(%w{ant bear cat}.none? { |word| word.length >= 4 }).to eq(false)
+    expect(%w[ant bear cat].none? { |word| word.length >= 4 }).to eq(false)
   end
 
   it 'none with hash true' do

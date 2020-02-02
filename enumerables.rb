@@ -68,6 +68,7 @@ module Enumerable
 
   def my_none?(arg = nil)
     return my_select { |item| item == true }.empty? if !block_given? && arg.nil?
+
     if block_given?
       my_each { |n| return true unless yield n }
     else
