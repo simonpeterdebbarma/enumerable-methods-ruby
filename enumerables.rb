@@ -169,10 +169,10 @@ module Enumerable
     end
     arr[0..-1].my_each do |item|
       injected = if sym
-                 injected.send(sym, item)
-               else
-                 yield(injected, item)
-               end
+                   injected.send(sym, item)
+                 else
+                   yield(injected, item)
+                 end
     end
     injected
   end
