@@ -1,4 +1,4 @@
-# enumerable-methods-ruby
+# Enumerable Methods in Ruby
 Rebuilding enumerable methods in Ruby, in partial requirement of Microverse.
 
 ---
@@ -23,11 +23,31 @@ $ git clone https://github.com/simonpeterdebbarma/bubble-sort-ruby.git
 $ cd enumerable-methods-ruby
 ```
 
-> Run in terminal
+> Run unit tests in terminal
 
 ```
-$ ruby bin/
+$ rake
+
 ```
+
+> Use methods in terminal
+
+```
+$ open enumerables.rb in an IDE
+
+{insert your code/array/hash}.method_name({insert block/parameters})
+
+$ ruby enumerables.rb
+
+```
+
+> Use methods in another file
+
+```
+$ require-relative 'enumerables.rb'
+
+```
+
 
 
 
