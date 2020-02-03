@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './enumerables'
+require '../enumerables'
 
 RSpec.describe Enumerable do
   let(:enum) do

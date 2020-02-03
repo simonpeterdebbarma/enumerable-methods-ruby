@@ -1,4 +1,4 @@
-require 'enumerables'
+require_relative '../enumerables.rb'
 
 describe 'my_each' do
   it 'block not given' do

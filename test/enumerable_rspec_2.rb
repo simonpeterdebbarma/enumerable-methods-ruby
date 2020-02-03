@@ -1,4 +1,4 @@
-require "./enumerables"
+require_relative '../enumerables.rb'
 
 
 RSpec.describe Enumerable do

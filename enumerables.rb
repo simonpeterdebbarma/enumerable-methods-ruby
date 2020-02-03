@@ -69,11 +69,12 @@ module Enumerable
   def my_none?(arg = nil)
     if block_given?
       my_each { |n| return false if yield n }
+      true
     else
       proc = validate_args(arg)
-      my_each { |n| return true unless proc.call(n) }
+      my_each { |n| return false if proc.call(n) }
     end
-    false
+    true
   end
 
   def my_any?(arg = nil)
