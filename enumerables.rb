@@ -67,10 +67,8 @@ module Enumerable
   end
 
   def my_none?(arg = nil)
-    return my_select { |item| item == true }.empty? if !block_given? && arg.nil?
-
     if block_given?
-      my_each { |n| return true unless yield n }
+      my_each { |n| return false if yield n }
     else
       proc = validate_args(arg)
       my_each { |n| return true unless proc.call(n) }
@@ -113,7 +111,7 @@ module Enumerable
     return length unless block_given?
 
     if self.class == Array
-      (length - 1).times do |i|
+      length.times do |i|
         count += 1 if yield(self[i])
       end
     elsif self.class == Hash
@@ -164,8 +162,8 @@ module Enumerable
     end
     injected
   end
-end
 
-def multiply_els(arr)
-  arr.my_inject { |a, b| a * b }
+  def multiply_els(arr)
+    arr.my_inject { |a, b| a * b }
+  end
 end
